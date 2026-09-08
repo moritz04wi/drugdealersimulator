@@ -1,0 +1,19 @@
+{
+  "name": "Drug Dealer Simulator",
+  "short_name": "Dealer Sim",
+  "description": "Incremental Game im Graffiti-Look: Ware einkaufen, an Fußgänger, Radfahrer und Autos dealen, neue Sorten freischalten.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12111a",
+  "theme_color": "#12111a",
+  "categories": ["games"],
+  "lang": "de",
+  "icons": [
+    { "src": "./assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "./assets/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

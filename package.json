@@ -1,0 +1,15 @@
+{
+  "name": "drug-dealer-simulator",
+  "version": "1.0.0",
+  "description": "Incremental Game im Graffiti-Look: Ware einkaufen, an Fußgänger, Radfahrer und Autos dealen, neue Sorten freischalten.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "icons": "node tools/make-icons.mjs",
+    "test": "node tools/smoke-test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.1"
+  }
+}

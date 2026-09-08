@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1826"/>
+      <stop offset="1" stop-color="#100f18"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#wall)"/>
+  <g stroke="#000" stroke-opacity="0.35" stroke-width="2">
+    <path d="M0 60H512M0 106H512M0 152H512M0 198H512M0 244H512M0 290H512M0 336H512M0 382H512M0 428H512M0 474H512"/>
+  </g>
+  <path d="M30 440q226-58 452 0" stroke="#ff2e9a" stroke-width="26" fill="none"
+        stroke-linecap="round" opacity="0.85" filter="url(#glow)"/>
+  <g transform="translate(256 215)">
+    <g id="leaf" fill="#7cff3f" stroke="#000" stroke-width="14" stroke-linejoin="round">
+      <path d="M0 40 L0-150 L26-70 Z"/>
+      <path d="M0 40 L74-120 L60-34 Z"/>
+      <path d="M0 40 L-74-120 L-60-34 Z"/>
+      <path d="M0 40 L128-58 L82-6 Z"/>
+      <path d="M0 40 L-128-58 L-82-6 Z"/>
+      <path d="M0 40 L124 24 L70 26 Z"/>
+      <path d="M0 40 L-124 24 L-70 26 Z"/>
+      <rect x="-7" y="34" width="14" height="70" rx="6"/>
+    </g>
+  </g>
+  <g fill="#7cff3f" opacity="0.85">
+    <rect x="118" y="250" width="11" height="70" rx="5"/><circle cx="123.5" cy="322" r="9"/>
+    <rect x="222" y="298" width="11" height="82" rx="5"/><circle cx="227.5" cy="382" r="9"/>
+    <rect x="330" y="262" width="11" height="56" rx="5"/><circle cx="335.5" cy="320" r="9"/>
+    <rect x="404" y="238" width="11" height="48" rx="5"/><circle cx="409.5" cy="288" r="9"/>
+  </g>
+  <rect x="5" y="5" width="502" height="502" fill="none" stroke="#ff2e9a" stroke-width="10"/>
+</svg>

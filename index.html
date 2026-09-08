@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#12111a">
+  <meta name="description" content="Drug Dealer Simulator - Incremental Game im Graffiti-Look. Kauf ein, deal an Fußgänger, Radfahrer und Autos, schalte neue Sorten frei.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dealer Sim">
+  <title>Drug Dealer Simulator</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Kopfzeile -->
+    <header id="hud">
+      <div class="hud-top">
+        <div class="logo">
+          <span class="logo-main">DEALER</span><span class="logo-sub">SIM</span>
+        </div>
+        <div class="money">
+          <b id="cash">0 €</b>
+          <small id="rate">0 €/min</small>
+        </div>
+        <div class="rep" id="rep">★ 0</div>
+      </div>
+      <div class="bars">
+        <div class="bar heat-wrap">
+          <span class="bar-icon">🚨</span>
+          <div class="bar-track"><div class="bar-fill heat" id="heat-bar"></div></div>
+          <span class="bar-val" id="heat-label">0%</span>
+        </div>
+        <div class="bar">
+          <span class="bar-icon">📦</span>
+          <div class="bar-track"><div class="bar-fill stash" id="stash-bar"></div></div>
+          <span class="bar-val" id="stash-label">0 g</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Straßenszene -->
+    <main id="stage">
+      <canvas id="scene"></canvas>
+      <div id="hint"></div>
+      <div id="toasts"></div>
+    </main>
+
+    <!-- Schublade für Einkauf, Sorten, Upgrades -->
+    <section id="panel" aria-live="polite">
+      <div class="panel-head">
+        <h2 id="panel-title">Einkauf</h2>
+        <button id="panel-close" aria-label="Schließen">✕</button>
+      </div>
+      <div id="panel-body"></div>
+    </section>
+
+    <!-- Navigation -->
+    <nav id="tabbar">
+      <button class="tab active" data-tab="street"><span>🏙️</span>Straße</button>
+      <button class="tab" data-tab="buy"><span>📦</span>Einkauf</button>
+      <button class="tab" data-tab="strains"><span>🌿</span>Sorten</button>
+      <button class="tab" data-tab="upgrades"><span>⚡</span>Upgrades</button>
+      <button class="tab" data-tab="more"><span>📊</span>Mehr</button>
+    </nav>
+  </div>
+
+  <div id="modal">
+    <div class="modal-card">
+      <button id="modal-close" aria-label="Schließen">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
