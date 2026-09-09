@@ -62,28 +62,50 @@ html, body {
   transform: rotate(-3deg);
   text-shadow: 2px 2px 0 #000, 0 0 14px rgba(124, 255, 63, 0.5);
 }
-.logo-main { color: var(--green); font-size: 19px; display: block; }
-.logo-sub { color: var(--pink); font-size: 13px; letter-spacing: 3px; display: block; }
+.logo-main { color: var(--green); font-size: clamp(15px, 4.6vw, 20px); display: block; }
+.logo-sub { color: var(--pink); font-size: clamp(10px, 3.2vw, 13px); letter-spacing: 3px; display: block; }
 
-.money { margin-left: auto; text-align: right; }
+.money { margin-left: auto; text-align: right; min-width: 0; }
+.money-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
 .money b {
-  display: block;
   font-family: var(--marker);
-  font-size: 24px;
+  font-size: clamp(17px, 5.6vw, 26px);
   color: var(--yellow);
   text-shadow: 2px 2px 0 #000;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
-.money small { color: var(--muted); font-size: 11px; }
+.weed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--marker);
+  font-size: clamp(13px, 4.2vw, 18px);
+  color: var(--green);
+  text-shadow: 2px 2px 0 #000;
+  white-space: nowrap;
+}
+.leaf {
+  width: 1em;
+  height: 1em;
+  filter: drop-shadow(0 0 5px rgba(124, 255, 63, 0.55));
+}
+.money small { display: block; color: var(--muted); font-size: 11px; }
 
 .rep {
   font-family: var(--marker);
-  font-size: 12px;
+  font-size: clamp(10px, 3vw, 12px);
   color: var(--cyan);
   background: rgba(0, 229, 255, 0.1);
   border: 1px solid rgba(0, 229, 255, 0.3);
   border-radius: 999px;
-  padding: 4px 8px;
+  padding: 4px 7px;
   white-space: nowrap;
 }
 
@@ -157,9 +179,7 @@ html, body {
 /* ---------- Panel ---------- */
 #panel {
   position: absolute;
-  left: 0; right: 0;
-  bottom: calc(62px + var(--safe-bottom));
-  top: 96px;
+  inset: 0;
   background: var(--panel);
   border-top: 3px solid var(--pink);
   border-radius: 18px 18px 0 0;
@@ -251,6 +271,18 @@ html, body {
 .btn.ghost { background: none; color: var(--muted); border-color: var(--line); }
 .btn.danger { background: rgba(255, 59, 59, 0.16); color: var(--red); border-color: rgba(255, 59, 59, 0.6); }
 
+.card.picking { border-color: var(--accent, var(--green)); background: #2a2639; }
+.confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.confirm-text { flex: 1; font-size: 14px; line-height: 1.35; min-width: 0; }
+.confirm-text .price { color: var(--yellow); font-family: var(--marker); font-size: 17px; }
+.confirm-text small { display: block; color: var(--muted); font-size: 11px; }
+.confirm .btn.ghost { padding: 8px 12px; }
+
 .stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -264,6 +296,7 @@ html, body {
 }
 .stats span { display: block; color: var(--muted); font-size: 11px; }
 .stats b { font-family: var(--marker); font-size: 16px; color: var(--yellow); }
+.stats b small { font-size: 12px; }
 
 /* ---------- Tabbar ---------- */
 #tabbar {
@@ -342,6 +375,5 @@ html, body {
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
 
 @media (min-height: 760px) {
-  .money b { font-size: 28px; }
-  #panel { top: 120px; }
+  #hud { padding-bottom: 10px; }
 }

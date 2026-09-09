@@ -27,7 +27,23 @@
           <span class="logo-main">DEALER</span><span class="logo-sub">SIM</span>
         </div>
         <div class="money">
-          <b id="cash">0 €</b>
+          <div class="money-row">
+            <b id="cash">0 €</b>
+            <span class="weed">
+              <svg class="leaf" viewBox="-140 -160 280 278" aria-hidden="true">
+                <g fill="currentColor">
+                  <path d="M0 40 L0-150 L26-70 Z"/>
+                  <path d="M0 40 L74-120 L60-34 Z"/>
+                  <path d="M0 40 L-74-120 L-60-34 Z"/>
+                  <path d="M0 40 L128-58 L82-6 Z"/>
+                  <path d="M0 40 L-128-58 L-82-6 Z"/>
+                  <path d="M0 40 L124 24 L70 26 Z"/>
+                  <path d="M0 40 L-124 24 L-70 26 Z"/>
+                  <rect x="-7" y="34" width="14" height="70" rx="6"/>
+                </g>
+              </svg><span id="weed">0 g</span>
+            </span>
+          </div>
           <small id="rate">0 €/min</small>
         </div>
         <div class="rep" id="rep">★ 0</div>
@@ -41,7 +57,7 @@
         <div class="bar">
           <span class="bar-icon">📦</span>
           <div class="bar-track"><div class="bar-fill stash" id="stash-bar"></div></div>
-          <span class="bar-val" id="stash-label">0 g</span>
+          <span class="bar-val" id="stash-label">max 500 g</span>
         </div>
       </div>
     </header>
@@ -51,16 +67,16 @@
       <canvas id="scene"></canvas>
       <div id="hint"></div>
       <div id="toasts"></div>
-    </main>
 
-    <!-- Schublade für Einkauf, Sorten, Upgrades -->
-    <section id="panel" aria-live="polite">
-      <div class="panel-head">
-        <h2 id="panel-title">Einkauf</h2>
-        <button id="panel-close" aria-label="Schließen">✕</button>
-      </div>
-      <div id="panel-body"></div>
-    </section>
+      <!-- Schublade für Einkauf, Sorten, Upgrades -->
+      <section id="panel" aria-live="polite">
+        <div class="panel-head">
+          <h2 id="panel-title">Einkauf</h2>
+          <button id="panel-close" aria-label="Schließen">✕</button>
+        </div>
+        <div id="panel-body"></div>
+      </section>
+    </main>
 
     <!-- Navigation -->
     <nav id="tabbar">

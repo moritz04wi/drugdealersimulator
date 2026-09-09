@@ -206,6 +206,8 @@ export class Scene {
     g.scale(scale, scale);
     g.font = '700 26px "Permanent Marker", Impact, "Arial Black", sans-serif';
     g.textBaseline = 'middle';
+    // Zentriert zeichnen - die Platzierung rechnet ebenfalls mit der Mitte.
+    g.textAlign = 'center';
     g.globalAlpha = 0.85;
 
     g.lineJoin = 'round';
@@ -219,17 +221,16 @@ export class Scene {
     g.strokeText(text, 0, 0);
 
     // Farbnasen
-    const width = g.measureText(text).width;
+    const half = g.measureText(text).width / 2;
     g.globalAlpha = 0.5;
     g.fillStyle = color;
     for (let i = 0; i < 3; i++) {
-      const dx = rnd(0, width);
-      g.fillRect(dx, 6, 2, rnd(6, 20));
+      g.fillRect(rnd(-half, half), 6, 2, rnd(6, 20));
     }
     // Sprühnebel
     g.globalAlpha = 0.12;
     for (let i = 0; i < 60; i++) {
-      g.fillRect(rnd(-12, width + 12), rnd(-20, 20), 1.5, 1.5);
+      g.fillRect(rnd(-half - 12, half + 12), rnd(-20, 20), 1.5, 1.5);
     }
     g.restore();
   }

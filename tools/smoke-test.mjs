@@ -48,13 +48,27 @@ console.log('Panel offen:', await page.locator('#panel').evaluate((e) => e.class
 console.log('Panel-Titel:', await page.locator('#panel-title').textContent());
 await page.screenshot({ path: '/tmp/dds-buy.png' });
 
-// 10 g Bahnhofs-Gras kaufen
-await page.click('[data-buy="bahnhof:10"]');
+// 10 g Bahnhofs-Gras: erst Menge waehlen, Preis pruefen, dann bestaetigen
+await page.click('[data-pick="bahnhof:10"]');
+await page.waitForTimeout(200);
+console.log('Bestaetigungszeile:', (await page.locator('.confirm-text').first().innerText()).replace(/\s+/g, ' '));
+const cashBeforeBuy = await page.evaluate(() => window.dds.game.state.cash);
+const stockBeforeBuy = await page.evaluate(() => window.dds.game.stockTotal);
+console.log('vor dem Bestaetigen unveraendert:', cashBeforeBuy === 60 && stockBeforeBuy === 0);
+await page.screenshot({ path: '/tmp/dds-confirm.png' });
+await page.click('[data-confirm="bahnhof"]');
 await page.waitForTimeout(300);
 console.log('Nach Kauf ->', await page.evaluate(() => ({
   cash: Math.round(window.dds.game.state.cash),
   stock: window.dds.game.stockTotal,
+  weed: document.getElementById('weed').textContent,
 })));
+
+// Abbrechen darf nichts kaufen
+await page.click('[data-pick="bahnhof:10"]');
+await page.click('[data-cancel]');
+await page.waitForTimeout(200);
+console.log('Nach Abbruch Lager:', await page.evaluate(() => window.dds.game.stockTotal));
 
 // Zurueck auf die Strasse, warten bis Kundschaft ansteht, dann antippen
 await page.click('.tab[data-tab="street"]');

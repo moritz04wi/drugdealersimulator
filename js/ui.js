@@ -13,6 +13,7 @@ export class UI {
     this.tab = 'street';
     this.el = {
       cash: $('#cash'),
+      weed: $('#weed'),
       rate: $('#rate'),
       heatBar: $('#heat-bar'),
       heatLabel: $('#heat-label'),
@@ -38,6 +39,10 @@ export class UI {
     game.on('change', () => this.markDirty());
     game.on('denied', (msg) => this.toast(msg, 'bad'));
     game.on('unlocked', (s) => this.toast(`${s.emoji} ${s.name} freigeschaltet!`, 'good'));
+    game.on('bought', ({ strainId, amount, cost }) => {
+      const strain = STRAINS.find((s) => s.id === strainId);
+      this.toast(`${strain.emoji} ${formatShort(amount)} g für ${euro(cost)} eingekauft`, 'good');
+    });
     game.on('upgraded', ({ upgrade, level }) => this.toast(`${upgrade.emoji} ${upgrade.name} Lv.${level}`, 'good'));
     game.on('raid', ({ lostCash, lostGrams }) => {
       this.toast(`🚨 RAZZIA! ${euro(lostCash)} und ${Math.round(lostGrams)} g weg.`, 'bad', 4000);
@@ -54,6 +59,7 @@ export class UI {
 
   openTab(tab) {
     this.tab = tab;
+    this.pendingBuy = null;
     this.el.tabs.forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
     if (tab === 'street') {
       this.el.panel.classList.remove('open');
@@ -106,10 +112,15 @@ export class UI {
     this.el.heatLabel.textContent = `${Math.round(heatPct)}%`;
 
     const stash = g.stockTotal;
+    this.el.weed.textContent = `${formatShort(stash)} g`;
     this.el.stashBar.style.width = `${Math.min(100, (stash / g.capacity) * 100)}%`;
-    this.el.stashLabel.textContent = `${formatShort(stash)}/${formatShort(g.capacity)} g`;
+    this.el.stashLabel.textContent = `max ${formatShort(g.capacity)} g`;
 
-    this.el.rep.textContent = s.rep > 0 ? `★ ${s.rep} (+${Math.round(s.rep * PRESTIGE.bonusPerPoint * 100)}%)` : '★ 0';
+    // Kurz halten - der Bonus steht ausfuehrlich unter "Mehr".
+    this.el.rep.textContent = `★ ${s.rep}`;
+    this.el.rep.title = s.rep > 0
+      ? `Ruf: +${Math.round(s.rep * PRESTIGE.bonusPerPoint * 100)}% auf alle Verkaufspreise`
+      : 'Ruf sammelst du beim Stadtwechsel';
 
     this.updateHint();
 
@@ -156,11 +167,35 @@ export class UI {
   }
 
   bindPanel() {
-    this.el.panelBody.querySelectorAll('[data-buy]').forEach((btn) => {
+    // Schritt 1: Menge waehlen - gekauft wird erst nach dem Bestaetigen.
+    this.el.panelBody.querySelectorAll('[data-pick]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const [id, amount] = btn.dataset.buy.split(':');
-        if (amount === 'max') this.game.buyMax(id);
-        else this.game.buyStock(id, Number(amount));
+        const [id, amount] = btn.dataset.pick.split(':');
+        const grams = amount === 'max'
+          ? Math.min(this.game.freeSpace, Math.floor(this.game.state.cash / this.game.buyPrice(id)))
+          : Number(amount);
+        if (grams <= 0) {
+          this.toast(this.game.freeSpace <= 0 ? 'Bunker ist voll!' : 'Zu wenig Kohle!', 'bad');
+          return;
+        }
+        this.pendingBuy = { id, grams };
+        this.renderPanel();
+      });
+    });
+
+    // Schritt 2: bestaetigen oder abbrechen
+    this.el.panelBody.querySelectorAll('[data-confirm]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.confirm;
+        const grams = this.pendingBuy && this.pendingBuy.id === id ? this.pendingBuy.grams : 0;
+        if (this.game.buyStock(id, grams) > 0) this.pendingBuy = null;
+        this.renderPanel();
+      });
+    });
+    this.el.panelBody.querySelectorAll('[data-cancel]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        this.pendingBuy = null;
+        this.renderPanel();
       });
     });
     this.el.panelBody.querySelectorAll('[data-unlock]').forEach((btn) => {
@@ -217,13 +252,39 @@ export class UI {
       const price = g.buyPrice(s.id);
       const stock = g.state.stock[s.id] || 0;
       const margin = ((g.sellPrice(s.id) / price - 1) * 100).toFixed(0);
-      const amounts = [10, 50, 250];
-      const buttons = amounts.map((a) => {
-        const afford = g.state.cash >= a * price && g.freeSpace >= a;
-        return `<button class="chip ${afford ? '' : 'off'}" data-buy="${s.id}:${a}">${a}g</button>`;
-      }).join('');
+      const pending = this.pendingBuy && this.pendingBuy.id === s.id ? this.pendingBuy : null;
+
+      let footer;
+      if (pending) {
+        // Zweiter Schritt: Menge steht fest, jetzt wird der Preis gezeigt.
+        const cost = pending.grams * price;
+        const afford = g.state.cash >= cost && g.freeSpace >= pending.grams;
+        footer = `
+          <div class="confirm">
+            <span class="confirm-text">
+              <b>${formatShort(pending.grams)} g</b> für <b class="price">${euro(cost)}</b>
+              <small>${afford
+                ? `danach noch ${euro(g.state.cash - cost)}`
+                : g.freeSpace < pending.grams ? 'kein Platz im Bunker' : 'zu wenig Kohle'}</small>
+            </span>
+            <button class="btn ghost" data-cancel="1">✕</button>
+            <button class="btn ${afford ? 'go' : 'off'}" data-confirm="${s.id}">Kaufen</button>
+          </div>`;
+      } else {
+        const amounts = [10, 50, 250];
+        const buttons = amounts.map((a) => {
+          const afford = g.state.cash >= a * price && g.freeSpace >= a;
+          return `<button class="chip ${afford ? '' : 'off'}" data-pick="${s.id}:${a}">${a}g</button>`;
+        }).join('');
+        footer = `
+          <div class="chips">${buttons}
+            <button class="chip max ${g.freeSpace > 0 && g.state.cash >= price ? '' : 'off'}"
+              data-pick="${s.id}:max">MAX</button>
+          </div>`;
+      }
+
       return `
-        <div class="card" style="--accent:${s.color}">
+        <div class="card ${pending ? 'picking' : ''}" style="--accent:${s.color}">
           <div class="card-head">
             <span class="emoji">${s.emoji}</span>
             <div class="card-title">
@@ -232,10 +293,7 @@ export class UI {
             </div>
             <span class="stock">${formatShort(stock)} g</span>
           </div>
-          <div class="chips">${buttons}
-            <button class="chip max ${g.freeSpace > 0 && g.state.cash >= price ? '' : 'off'}"
-              data-buy="${s.id}:max">MAX</button>
-          </div>
+          ${footer}
         </div>`;
     }).join('');
 
@@ -306,7 +364,7 @@ export class UI {
         <div><span>Verpasst</span><b>${formatShort(s.lostDeals)}</b></div>
         <div><span>Razzien</span><b>${formatShort(s.raids)}</b></div>
         <div><span>Umzüge</span><b>${formatShort(s.moves)}</b></div>
-        <div><span>Ruf</span><b>★ ${s.rep}</b></div>
+        <div><span>Ruf</span><b>★ ${s.rep} <small class="up">+${Math.round(s.rep * PRESTIGE.bonusPerPoint * 100)}%</small></b></div>
         <div><span>Am Start seit</span><b>${days} Tag${days === 1 ? '' : 'en'}</b></div>
       </div>
 
